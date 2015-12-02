@@ -13,4 +13,4 @@ ansible-galaxy install --force ateoto.docker
 
 # Now run the rancher provisioning
 ansible-playbook -i /var/tmp/vagrant_inventory /vagrant/provisioning/rancher-server.yml
-ansible-playbook -i /var/tmp/vagrant_inventory /vagrant/provisioning/rancher-agent.yml
+ansible-playbook -v -i /var/tmp/vagrant_inventory /vagrant/provisioning/rancher-agent.yml

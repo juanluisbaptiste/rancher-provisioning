@@ -3,4 +3,19 @@
   sudo: yes
   roles:
     - ateoto.docker
+  tasks:
+  - name: Pull and run Rancher server container
+    docker:
+      name: rancherserver
+      image: rancher/server
+      state: reloaded
+      restart_policy: always
+      ports:
+      - "8080:8080"
+  - name: Wait for the Rancher server to start
+    action: command docker logs rancherserver
+    register: rancher_logs
+    until: rancher_logs.stdout.find("Listening on") != -1
+    retries: 30
+    delay: 10
 
