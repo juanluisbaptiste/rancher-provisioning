@@ -26,7 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   hostname_server = 'rancher-provisioner'
   config.vm.define hostname_server do |node|
-    node.vm.box  = 'box-cutter/ubuntu1404-desktop'
+    node.vm.box  = 'ubuntu/trusty64'
     node.vm.hostname = 'rancher-provisioner'
     node.vm.provision "shell", path: "bootstrapProvisioner.sh", privileged: true
   end
