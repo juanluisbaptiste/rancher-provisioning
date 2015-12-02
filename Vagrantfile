@@ -22,12 +22,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     server.vm.hostname = 'rancher-server'
     server.vm.network 'forwarded_port', guest: 8080, host: 8080, auto_correct: true
     server.vm.network 'private_network', ip: server_ip
+    server.vm.synced_folder ".", "/vagrant", disabled: true
   end
 
   hostname_node = 'rancher-agent-1'
   node_ip = "172.19.8.101"
   config.vm.define hostname_node do |node|
-    server.vm.hostname = hostname_node
+    node.vm.hostname = hostname_node
     node.vm.network 'private_network', ip: node_ip
+    node.vm.synced_folder ".", "/vagrant", disabled: true
   end
+
+
 end
