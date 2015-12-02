@@ -1,5 +1,6 @@
 ---
-- hosts: server
+- hosts: rancherserver
+  sudo: yes
   roles:
     - ateoto.docker
 

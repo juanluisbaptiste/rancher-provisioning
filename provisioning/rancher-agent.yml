@@ -1,0 +1,5 @@
+---
+- hosts: rancheragent
+  sudo: yes
+  roles:
+    - ateoto.docker
