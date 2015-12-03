@@ -1,5 +1,7 @@
 ---
 - hosts: rancherserver
+  vars:
+    rancher_server_version: 0.47.0
   sudo: yes
   roles:
     - ateoto.docker
@@ -7,9 +9,10 @@
   - name: Pull and run Rancher server container
     docker:
       name: rancherserver
-      image: rancher/server
+      image: rancher/server:v{{rancher_server_version}}
       state: reloaded
       restart_policy: always
+      detach: True
       ports:
       - "8080:8080"
   - name: Wait for the Rancher server to start
