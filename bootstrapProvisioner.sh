@@ -1,18 +1,10 @@
-apt-get update -y
-apt-get install -y software-properties-common
-apt-add-repository -y ppa:ansible/ansible
-apt-get update -y
-apt-get install -y ansible sshpass
-
 cp /vagrant/provisioning/inventory/vagrant_inventory /var/tmp
 chmod -x /var/tmp/vagrant_inventory
 
-export ANSIBLE_HOST_KEY_CHECKING=False
+RANCHER_SERVER_HOST=172.19.8.100
+RANCHER_AGENT_HOST=172.19.8.101
+SSH_PASS=vagrant
+SSH_USER=vagrant
 
-#install any ansible roles we may need
-ansible-galaxy install --force ateoto.docker
-
-# Now run the rancher provisioning
-ansible-playbook -i /var/tmp/vagrant_inventory /vagrant/provisioning/rancher-server.yml
-ansible-playbook -i /var/tmp/vagrant_inventory /vagrant/provisioning/rancher-agent.yml
-
+# Main provisioning entry point
+cd /vagrant/ && ./provision.sh

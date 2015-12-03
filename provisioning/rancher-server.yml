@@ -1,5 +1,5 @@
 ---
-- hosts: rancherserver
+- hosts: all
   vars:
     rancher_server_version: 0.47.0
   sudo: yes

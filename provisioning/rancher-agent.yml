@@ -1,5 +1,5 @@
 ---
-- hosts: rancheragent
+- hosts: all
   sudo: yes
   vars:
     rancher_server: 172.19.8.100
@@ -48,7 +48,7 @@
       action: command docker logs rancher-agent
       register: rancher_logs 
       until: rancher_logs.stdout.find("Starting cAdvisor version") != -1
-      retries: 10
+      retries: 30
       delay: 10
 
 
