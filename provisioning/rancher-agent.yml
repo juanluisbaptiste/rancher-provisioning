@@ -2,8 +2,6 @@
 - hosts: all
   sudo: yes
   vars:
-    rancher_server: 172.19.8.100
-    rancher_port: 8080
     rancher_agent_version: 0.8.2
   roles:
     - ateoto.docker
@@ -44,10 +42,13 @@
         state: reloaded
         restart_policy: always
 
-    - name: Wait for the Rancher agent to start
-      action: command docker logs rancher-agent
-      register: rancher_logs 
-      until: rancher_logs.stdout.find("Starting cAdvisor version") != -1
+    - name: Wait for the Rancher agent to register with server
+      action: uri
+        method=GET
+        status_code=200
+        url="http://{{ rancher_server }}:{{ rancher_port }}/v1/hosts" return_content=yes
+      register: rancher_hosts
+      until: rancher_hosts.stdout.find("{{rancher_agent_name}}") != -1
       retries: 30
       delay: 10
 

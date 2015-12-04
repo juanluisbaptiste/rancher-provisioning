@@ -14,7 +14,8 @@
       restart_policy: always
       detach: True
       ports:
-      - "8080:8080"
+      - "{{ rancher_port }}:{{ rancher_port }}"
+
   - name: Wait for the Rancher server to start
     action: command docker logs rancherserver
     register: rancher_logs
