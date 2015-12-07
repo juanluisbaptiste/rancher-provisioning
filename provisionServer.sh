@@ -14,7 +14,8 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 ansible-galaxy install --force ateoto.docker
 
 ansible-playbook \
+  -v \
   -u $SSH_USER \
   -i $RANCHER_SERVER_HOST, \
-  --extra-vars "ansible_ssh_pass=$SSH_PASS RANCHER_SERVER=$RANCHER_SERVER_HOST RANCHER_PORT=$RANCHER_PORT ADMIN_USER=$ADMIN_USER ADMIN_PASS=$ADMIN_PASS"\
+  --extra-vars "ansible_ssh_pass=$SSH_PASS RANCHER_SERVER=$RANCHER_SERVER_HOST RANCHER_PORT=$RANCHER_PORT ADMIN_USER=$ADMIN_USER ADMIN_PASS=$ADMIN_PASS" \
   provisioning/rancher-server.yml

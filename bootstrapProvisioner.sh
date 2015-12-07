@@ -13,7 +13,7 @@ export SSH_USER=vagrant
 export ADMIN_USER=admin
 export ADMIN_PASS=admin
 
-./provisionServer.sh 
+./provisionServer.sh || exit $?
 
 export RANCHER_AGENT_HOST=172.19.8.101
 
