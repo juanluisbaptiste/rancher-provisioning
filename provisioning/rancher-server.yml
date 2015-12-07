@@ -1,7 +1,11 @@
 ---
 - hosts: all
   vars:
-    rancher_server_version: 0.47.0
+    server_version: 0.47.0
+    rancher_server: "{{ RANCHER_SERVER }}"
+    rancher_port: "{{ RANCHER_PORT }}"
+    admin_user: "{{ ADMIN_USER }}"
+    admin_pass: "{{ ADMIN_PASS }}"
   sudo: yes
   roles:
     - ateoto.docker
@@ -9,7 +13,7 @@
   - name: Pull and run Rancher server container
     docker:
       name: rancherserver
-      image: rancher/server:v{{rancher_server_version}}
+      image: rancher/server:v{{ server_version }}
       state: reloaded
       restart_policy: always
       detach: True
@@ -23,3 +27,20 @@
     retries: 30
     delay: 10
 
+  - name: Setup admin user
+    uri:
+      method: GET
+      status_code: 201
+      url: "http://{{ rancher_server }}:{{ rancher_port }}/v1/localauthconfigs"
+      return_content: yes
+      body_format: json
+      body: "{\"accessMode\": \"restricted\",\"enabled\": true,\"name\": \"admin\",\"password\": \"{{ admin_pass }}\",\"username\": \"{{ admin_user }}\",}"
+  
+  - name: Confirm admin access
+    uri:
+      method: GET
+      status_code: 200
+      force_basic_auth: yes
+      user: "{{ admin_user }}"
+      password: "{{ admin_pass }}"
+      url: "http://{{ rancher_server }}:{{ rancher_port }}/v1/projects"
