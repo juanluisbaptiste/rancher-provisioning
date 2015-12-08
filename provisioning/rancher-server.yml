@@ -41,19 +41,19 @@
       body_format: json
       body: "{ \"accessMode\": \"restricted\", \"enabled\": true, \"name\": \"{{ admin_user }}\", \"password\": \"{{ admin_pass }}\", \"username\": \"{{ admin_user }}\" }"
   
-  - name: Set default environment
-    uri:
-      method: POST
-      status_code: 201
-      url: "http://{{ rancher_server }}:{{ rancher_port }}/v1/userpreference"
-      body_format: json
-      body: "{\"type\":\"userPreference\",\"name\":\"defaultProjectId\",\"value\":\"1a5\"}"
-
-  - name: Confirm admin access
+  - name: Confirm admin access to web interface
     uri:
       method: GET
       status_code: 200
       force_basic_auth: yes
       user: "{{ admin_user }}"
       password: "{{ admin_pass }}"
-      url: "http://{{ rancher_server }}:{{ rancher_port }}/v1/projects"
+      url: "http://{{ rancher_server }}:{{ rancher_port }}"
+      register: login
+
+  - name: Confirm admin access to API
+    uri:
+      method: GET
+      status_code: 200
+      url: "http://{{ rancher_server }}:{{ rancher_port }}/v1"
+      HEADER_Cookie: "{{login.set_cookie}}"
