@@ -4,9 +4,9 @@
   vars:
     agent_version: 0.8.2
     rancher_server: "{{ RANCHER_SERVER }}"
-    rancher_port: "{{ RANCHER_PORT }}"    
-    admin_user: "{{ ADMIN_USER }}"
-    admin_pass: "{{ ADMIN_PASS }}"
+    rancher_port: "{{ RANCHER_PORT }}"
+    api_user: "{{ API_USER }}"
+    api_pass: "{{ API_PASS }}"
   roles:
     - ateoto.docker
   tasks:
@@ -15,40 +15,37 @@
         name: python-httplib2
         update_cache: yes
 
-    - name: Authenticate as admin
-      uri:
-        method: GET
-        status_code: 200
-        force_basic_auth: yes
-        user: "{{ admin_user }}"
-        password: "{{ admin_pass }}"
-        url: "http://{{ rancher_server }}:{{ rancher_port }}"
-        register: login
-
     - name: Get the default rancher project id
       uri:
         method: GET
         status_code: 200
+        force_basic_auth: yes
+        user: "{{ api_user }}"
+        password: "{{ api_pass }}"
         url: "http://{{ rancher_server }}:{{ rancher_port }}/v1/projects"
         return_content: yes
-        HEADER_Cookie: "{{login.set_cookie}}"
       register: project_id
 
     - name: Return the registration token URL of Rancher server
       uri: 
         method: POST
         status_code: 201
+        force_basic_auth: yes
+        user: "{{ api_user }}"
+        password: "{{ api_pass }}"
         url: "http://{{ rancher_server }}:{{ rancher_port }}/v1/registrationtokens?projectId={{ project_id.json['data'][0]['id'] }}"
         return_content: yes
-        HEADER_Cookie: "{{login.set_cookie}}"
       register: rancher_token_url
 
     - name: Return the registration URL of Rancher server
       uri:
-        method: GET 
+        method: GET
+        status_code: 200
+        force_basic_auth: yes
+        user: "{{ api_user }}"
+        password: "{{ api_pass }}"
         url: "{{ rancher_token_url.json['links']['self'] }}"
         return_content: yes
-        HEADER_Cookie: "{{login.set_cookie}}"
       register: rancher_token
 
     - name: Register the Agent Host machine with the Rancher server
@@ -66,8 +63,10 @@
       uri:
         method: GET
         status_code: 200
+        force_basic_auth: yes
+        user: "{{ api_user }}"
+        password: "{{ api_pass }}"
         url: "http://{{ rancher_server }}:{{ rancher_port }}/v1/hosts"
-        HEADER_Cookie: "{{login.set_cookie}}"
         return_content: yes
       register: rancher_hosts
       until: rancher_hosts.content.find("{{ ansible_hostname }}") != -1

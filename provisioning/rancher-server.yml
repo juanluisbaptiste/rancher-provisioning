@@ -6,6 +6,15 @@
     rancher_port: "{{ RANCHER_PORT }}"
     admin_user: "{{ ADMIN_USER }}"
     admin_pass: "{{ ADMIN_PASS }}"
+    api_user: "{{ API_USER }}"
+    api_pass: "{{ API_PASS }}"
+    api_key_body:
+      accountId: "1a1"
+      description: "provisioner"
+      name: "provisioner"
+      publicValue: "{{ api_user }}"
+      secretValue: "{{ api_pass }}"
+      _hack: null
   sudo: yes
   roles:
     - ateoto.docker
@@ -33,27 +42,30 @@
     retries: 30
     delay: 10
 
-  - name: Setup admin user
+  - name: Add API access key to admin account
     uri:
       method: POST
       status_code: 201
+      url: "http://{{ rancher_server }}:{{ rancher_port }}/v1/apikeys"
+      body_format: json
+      body: "{{ api_key_body | to_json }}"
+
+  - name: Enable local authentication and setup rancher server admin user
+    uri:
+      method: POST
+      status_code: 201
+      force_basic_auth: yes
+      user: "{{ api_user }}"
+      password: "{{ api_pass }}"
       url: "http://{{ rancher_server }}:{{ rancher_port }}/v1/localauthconfigs"
       body_format: json
       body: "{ \"accessMode\": \"restricted\", \"enabled\": true, \"name\": \"{{ admin_user }}\", \"password\": \"{{ admin_pass }}\", \"username\": \"{{ admin_user }}\" }"
-  
-  - name: Confirm admin access to web interface
-    uri:
-      method: GET
-      status_code: 200
-      force_basic_auth: yes
-      user: "{{ admin_user }}"
-      password: "{{ admin_pass }}"
-      url: "http://{{ rancher_server }}:{{ rancher_port }}"
-      register: login
 
   - name: Confirm admin access to API
     uri:
       method: GET
       status_code: 200
+      force_basic_auth: yes
+      user: "{{ api_user }}"
+      password: "{{ api_pass }}"
       url: "http://{{ rancher_server }}:{{ rancher_port }}/v1"
-      HEADER_Cookie: "{{login.set_cookie}}"

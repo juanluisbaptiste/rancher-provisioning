@@ -12,6 +12,8 @@ export SSH_PASS=vagrant
 export SSH_USER=vagrant
 export ADMIN_USER=admin
 export ADMIN_PASS=admin
+export API_USER=api_admin
+export API_PASS=api_admin
 
 ./provisionServer.sh || exit $?
 
