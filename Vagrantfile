@@ -19,10 +19,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   node_ip = "172.19.8.101"
   config.vm.define hostname_node do |node|
     node.vm.box  = 'debian/jessie64'
-    node.vm.provider "virtualbox" do |v|
-      v.memory = 1024
-      v.cpus = 1
-    end
     node.vm.hostname = hostname_node
     node.vm.network 'private_network', ip: node_ip
     node.vm.synced_folder ".", "/vagrant", disabled: true
