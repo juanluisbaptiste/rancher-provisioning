@@ -24,6 +24,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     node.vm.synced_folder ".", "/vagrant", disabled: true
   end
 
+  hostname_node = 'rancher-agent-2'
+  node_ip = "172.19.8.102"
+  config.vm.define hostname_node do |node|
+    node.vm.box  = 'debian/jessie64'
+    node.vm.hostname = hostname_node
+    node.vm.network 'private_network', ip: node_ip
+    node.vm.synced_folder ".", "/vagrant", disabled: true
+  end
+
   hostname_server = 'rancher-provisioner'
   config.vm.define hostname_server do |node|
     node.vm.box  = 'ubuntu/trusty64'

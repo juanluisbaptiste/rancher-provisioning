@@ -20,3 +20,7 @@ export API_PASS=api_admin
 export RANCHER_AGENT_HOST=172.19.8.101
 
 ./provisionAgent.sh
+
+export RANCHER_AGENT_HOST=172.19.8.102
+
+./provisionAgent.sh
