@@ -25,6 +25,13 @@
       name: python-httplib2
       update_cache: yes
 
+  - name: Create mount volume directories for persistent rancher server data
+    file: path={{ item.path }} state=directory mode="a+rw"
+    with_items:
+      - { path: '/var/rancher/lib/mysql' }
+      - { path: '/var/rancher/log/mysql' }
+      - { path: '/var/rancher/lib/cattle' }
+
   - name: Pull and run Rancher server container
     docker:
       name: rancherserver
@@ -34,6 +41,10 @@
       detach: True
       ports:
       - "{{ rancher_port }}:{{ rancher_port }}"
+      volumes:
+      - /var/rancher/lib/cattle:/var/lib/cattle
+      - /var/rancher/lib/mysql:/var/lib/mysql
+      - /var/rancher/log/mysql:/var/log/mysql
 
   - name: Wait for the Rancher server to start
     action: command docker logs rancherserver
