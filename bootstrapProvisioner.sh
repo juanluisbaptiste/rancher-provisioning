@@ -23,4 +23,4 @@ export RANCHER_AGENT_HOST=172.19.8.101
 
 export RANCHER_AGENT_HOST=172.19.8.102
 
-./provisionAgent.sh
+#./provisionAgent.sh
