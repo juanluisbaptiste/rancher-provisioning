@@ -1,6 +1,6 @@
-#Rancher server and agent configuration using Ansible
+#Rancher server/agent installation and configuration using Ansible
 
-This repository contains Ansible playbooks for configuring a Rancher Server with local auth enabled and registering Rancher Agents to the server automatically.
+This repository contains Ansible playbooks for configuring a Rancher Server with local auth enabled and registering Rancher Agents to the server automatically.  Docker will be installed if not already on the target machine.
 
 ## Requirements
 To run these playbooks you need to have ansible installed:
