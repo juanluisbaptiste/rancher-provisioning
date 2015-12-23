@@ -8,14 +8,22 @@
     admin_pass: "{{ ADMIN_PASS }}"
     api_user: "{{ API_USER }}"
     api_pass: "{{ API_PASS }}"
-    api_key_body:
+    create_api_key_body:
       accountId: "1a1"
       description: "provisioner"
       name: "provisioner"
       publicValue: "{{ api_user }}"
       secretValue: "{{ api_pass }}"
       _hack: null
+    enable_local_auth_body:
+      accessMode: "restricted"
+      enabled: true
+      name: "{{ admin_user }}"
+      password: "{{ admin_pass }}"
+      username: "{{ admin_user }}"
+      _hack: null
   sudo: yes
+
   roles:
     - ateoto.docker
 
@@ -39,6 +47,7 @@
       state: reloaded
       restart_policy: always
       detach: True
+      net: bridge
       ports:
       - "{{ rancher_port }}:{{ rancher_port }}"
       volumes:
@@ -53,13 +62,28 @@
     retries: 30
     delay: 10
 
+  - name: Check if auth is enabled
+    uri:
+      method: GET
+      status_code: 401
+      url: "http://{{ rancher_server }}:{{ rancher_port }}/v1"
+    register: auth_enabled
+    ignore_errors: yes
+
+  # Example of debugging variables
+  #- debug: var=auth_enabled
+
   - name: Add API access key to admin account
     uri:
       method: POST
       status_code: 201
+      force_basic_auth: yes
+      user: "{{ api_user }}"
+      password: "{{ api_pass }}"
       url: "http://{{ rancher_server }}:{{ rancher_port }}/v1/apikeys"
       body_format: json
-      body: "{{ api_key_body | to_json }}"
+      body: "{{ create_api_key_body | to_json }}"
+    when: auth_enabled|failed
 
   - name: Enable local authentication and setup rancher server admin user
     uri:
@@ -70,7 +94,8 @@
       password: "{{ api_pass }}"
       url: "http://{{ rancher_server }}:{{ rancher_port }}/v1/localauthconfigs"
       body_format: json
-      body: "{ \"accessMode\": \"restricted\", \"enabled\": true, \"name\": \"{{ admin_user }}\", \"password\": \"{{ admin_pass }}\", \"username\": \"{{ admin_user }}\" }"
+      body: "{{ enable_local_auth_body | to_json }}"
+    when: auth_enabled|failed
 
   - name: Confirm admin access to API
     uri:
