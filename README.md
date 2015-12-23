@@ -1,6 +1,6 @@
 #Rancher server and agent configuration using Ansible
 
-This repository contains Ansible playbooks for configuring Rancher Servers and Rancher Agents.
+This repository contains Ansible playbooks for configuring a Rancher Server with local auth enabled and registering Rancher Agents to the server automatically.
 
 ## Requirements
 To run these playbooks you need to have ansible installed:
@@ -11,10 +11,25 @@ Ansible 1.9
 Playbooks are configured by passing in extra variables.  You need to pass in the environment variables in the --extra-vars option when running ansible-playbook.  See the provisionServer.sh, provisionAgent.sh and bootstrapProvisioner.sh scripts for examples.
 
 For the server playbook you need to set the --extra-vars:
-* RANCHER_SERVER
-* RANCHER_PORT
-* ADMIN_USER
-* ADMIN_PASS
+* RANCHER_SERVER_HOST (url for rancher server)
+* RANCHER_PORT (port rancher server is listening on)
+* ADMIN_USER (local auth admin username for rancher server web UI)
+* ADMIN_PASS (local auth admin user password for rancher server web UI)
+* SSH_USER (ssh user for target server machine)
+* SSH_PASS (ssh pass for target server machine)
+* API_USER (api username for talking to rancher server api)
+* API_PASS (api password for talking to rancher server api)
+
+
+For the agent playbook you need to set the --extra-vars:
+* RANCHER_SERVER_HOST (url for rancher server)
+* RANCHER_PORT (port rancher server is listening on)
+* SSH_USER (ssh user for target agent machine)
+* SSH_PASS (ssh pass for target agent machine)
+* API_USER (api username for talking to rancher server api)
+* API_PASS (api password for talking to rancher server api)
+
+
 
 ## Development environment
 
