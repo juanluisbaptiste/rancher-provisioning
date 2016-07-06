@@ -1,7 +1,7 @@
 ---
 - hosts: all
   vars:
-    server_version: 0.56.1
+    server_version: 1.1.0
     rancher_server: "{{ RANCHER_SERVER }}"
     rancher_port: "{{ RANCHER_PORT }}"
     admin_user: "{{ ADMIN_USER }}"
